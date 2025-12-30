@@ -29,22 +29,31 @@ public class VirtualEnvironment {
         new File(mVirtualRoot, "data").mkdirs();
         new File(mVirtualRoot, "cache").mkdirs();
         new File(mVirtualRoot, "lib").mkdirs();
+        new File(mVirtualRoot, "apps").mkdirs();
     }
     
-    public File getAppDataDir(String packageName) {
-        File appDir = new File(mVirtualRoot, "data/" + packageName);
+    public File getAppDataDir(String virtualPackageName) {
+        File appDir = new File(mVirtualRoot, "data/" + virtualPackageName);
         if (!appDir.exists()) {
             appDir.mkdirs();
         }
         return appDir;
     }
     
-    public File getAppCacheDir(String packageName) {
-        File cacheDir = new File(mVirtualRoot, "cache/" + packageName);
+    public File getAppCacheDir(String virtualPackageName) {
+        File cacheDir = new File(mVirtualRoot, "cache/" + virtualPackageName);
         if (!cacheDir.exists()) {
             cacheDir.mkdirs();
         }
         return cacheDir;
+    }
+    
+    public File getAppLibDir(String virtualPackageName) {
+        File libDir = new File(mVirtualRoot, "lib/" + virtualPackageName);
+        if (!libDir.exists()) {
+            libDir.mkdirs();
+        }
+        return libDir;
     }
     
     public boolean extractApk(String apkPath, String packageName) {
@@ -65,7 +74,7 @@ public class VirtualEnvironment {
         }
     }
     
-    private void copyFile(File source, File target) throws IOException {
+    public void copyFile(File source, File target) throws IOException {
         try (InputStream in = new FileInputStream(source);
              OutputStream out = new FileOutputStream(target)) {
             
@@ -75,5 +84,39 @@ public class VirtualEnvironment {
                 out.write(buffer, 0, length);
             }
         }
+    }
+    
+    public File getVirtualRoot() {
+        return mVirtualRoot;
+    }
+    
+    public File getAppsDir() {
+        return new File(mVirtualRoot, "apps");
+    }
+    
+    // Create isolated environment for each virtual app
+    public VirtualAppEnvironment createAppEnvironment(String virtualPackageName) {
+        return new VirtualAppEnvironment(this, virtualPackageName);
+    }
+    
+    public static class VirtualAppEnvironment {
+        private final VirtualEnvironment mParent;
+        private final String mVirtualPackageName;
+        private final File mDataDir;
+        private final File mCacheDir;
+        private final File mLibDir;
+        
+        VirtualAppEnvironment(VirtualEnvironment parent, String virtualPackageName) {
+            mParent = parent;
+            mVirtualPackageName = virtualPackageName;
+            mDataDir = parent.getAppDataDir(virtualPackageName);
+            mCacheDir = parent.getAppCacheDir(virtualPackageName);
+            mLibDir = parent.getAppLibDir(virtualPackageName);
+        }
+        
+        public File getDataDir() { return mDataDir; }
+        public File getCacheDir() { return mCacheDir; }
+        public File getLibDir() { return mLibDir; }
+        public String getVirtualPackageName() { return mVirtualPackageName; }
     }
 }

@@ -91,9 +91,9 @@ public class MainActivity extends AppCompatActivity {
     }
     
     private void launchApp(VirtualApp app) {
-        Intent intent = new Intent(this, VirtualAppActivity.class);
-        intent.putExtra("package_name", app.packageName);
-        intent.putExtra("apk_path", app.apkPath);
-        startActivity(intent);
+        boolean success = VirtualCore.get().launchApp(app.packageName);
+        if (!success) {
+            Toast.makeText(this, "Failed to launch virtual app", Toast.LENGTH_SHORT).show();
+        }
     }
 }
