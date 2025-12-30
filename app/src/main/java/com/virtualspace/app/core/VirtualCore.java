@@ -120,13 +120,18 @@ public class VirtualCore {
     public boolean launchApp(String packageName) {
         VirtualAppRuntime runtime = mRuntimes.get(packageName);
         if (runtime != null) {
-            // Launch through ProxyActivity
-            android.content.Intent intent = new android.content.Intent(mContext, ProxyActivity.class);
-            intent.putExtra("target_package", packageName);
-            intent.putExtra("target_activity", getMainActivity(packageName));
-            intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
-            mContext.startActivity(intent);
-            return true;
+            try {
+                // Launch through ProxyActivity
+                android.content.Intent intent = new android.content.Intent(mContext, ProxyActivity.class);
+                intent.putExtra("target_package", packageName);
+                intent.putExtra("target_activity", getMainActivity(packageName));
+                intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+                mContext.startActivity(intent);
+                return true;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
         }
         return false;
     }

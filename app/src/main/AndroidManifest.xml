@@ -31,6 +31,7 @@
         <activity
             android:name=".core.ProxyActivity"
             android:exported="false"
+            android:launchMode="singleTask"
             android:theme="@style/Theme.VirtualSpace" />
 
         <service

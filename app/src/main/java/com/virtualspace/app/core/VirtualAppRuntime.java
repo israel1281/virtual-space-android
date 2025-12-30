@@ -82,18 +82,21 @@ public class VirtualAppRuntime {
     }
     
     public void startActivity(Activity proxyActivity, String activityName, Intent originalIntent) {
-        // For now, just show a simple message instead of trying to load the actual activity
-        android.widget.Toast.makeText(proxyActivity, 
-            "Virtual app started: " + mAppInfo.realPackageName, 
-            android.widget.Toast.LENGTH_LONG).show();
-        
-        // Set a simple content view
-        android.widget.TextView textView = new android.widget.TextView(proxyActivity);
-        textView.setText("Virtual App: " + mAppInfo.realPackageName + "\n\nRunning in isolated environment");
-        textView.setTextSize(16);
-        textView.setPadding(32, 32, 32, 32);
-        textView.setGravity(android.view.Gravity.CENTER);
-        proxyActivity.setContentView(textView);
+        try {
+            // Show toast notification
+            android.widget.Toast.makeText(proxyActivity, 
+                "Virtual app started: " + mAppInfo.realPackageName, 
+                android.widget.Toast.LENGTH_SHORT).show();
+            
+            // Log the startup
+            android.util.Log.d("VirtualAppRuntime", "Starting virtual app: " + mAppInfo.realPackageName);
+            
+        } catch (Exception e) {
+            android.util.Log.e("VirtualAppRuntime", "Error starting virtual app", e);
+            android.widget.Toast.makeText(proxyActivity, 
+                "Error starting virtual app: " + e.getMessage(), 
+                android.widget.Toast.LENGTH_SHORT).show();
+        }
     }
     
     public void onActivityResume(Activity proxyActivity) {
