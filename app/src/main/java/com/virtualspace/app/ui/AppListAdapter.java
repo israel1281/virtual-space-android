@@ -1,0 +1,68 @@
+package com.virtualspace.app.ui;
+
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+import com.virtualspace.app.R;
+import com.virtualspace.app.core.VirtualApp;
+import java.util.ArrayList;
+import java.util.List;
+
+public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.ViewHolder> {
+    private List<VirtualApp> apps = new ArrayList<>();
+    private OnAppClickListener listener;
+    
+    public interface OnAppClickListener {
+        void onAppClick(VirtualApp app);
+    }
+    
+    public AppListAdapter(OnAppClickListener listener) {
+        this.listener = listener;
+    }
+    
+    public void updateApps(List<VirtualApp> newApps) {
+        apps.clear();
+        apps.addAll(newApps);
+        notifyDataSetChanged();
+    }
+    
+    @NonNull
+    @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_virtual_app, parent, false);
+        return new ViewHolder(view);
+    }
+    
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        VirtualApp app = apps.get(position);
+        holder.appName.setText(app.appName);
+        holder.packageName.setText(app.packageName);
+        
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onAppClick(app);
+            }
+        });
+    }
+    
+    @Override
+    public int getItemCount() {
+        return apps.size();
+    }
+    
+    static class ViewHolder extends RecyclerView.ViewHolder {
+        TextView appName;
+        TextView packageName;
+        
+        ViewHolder(View itemView) {
+            super(itemView);
+            appName = itemView.findViewById(R.id.appName);
+            packageName = itemView.findViewById(R.id.packageName);
+        }
+    }
+}

@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Virtual Space</string>
+    <string name="install_apk">Install APK</string>
+    <string name="virtual_apps">Virtual Apps</string>
+    <string name="no_apps_installed">No virtual apps installed</string>
+    <string name="app_loading">Loading virtual app...</string>
+    <string name="app_load_failed">Failed to load virtual app</string>
+</resources>
