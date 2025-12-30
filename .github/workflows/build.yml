@@ -44,7 +44,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: app-release
-        path: app/build/outputs/apk/release/app-release-unsigned.apk
+        path: app/build/outputs/apk/release/app-release.apk
 
     - name: Create Release
       if: startsWith(github.ref, 'refs/tags/')
@@ -62,5 +62,6 @@ jobs:
         - Educational research capabilities
 
         ## Installation
-        Download the APK and install on your Android device." \
-          app/build/outputs/apk/release/app-release-unsigned.apk
+        Download the APK and install on your Android device.
+        Enable 'Install from unknown sources' in your device settings." \
+          app/build/outputs/apk/release/app-release.apk
