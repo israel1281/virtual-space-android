@@ -10,12 +10,18 @@ android {
         applicationId "com.virtualspace.app"
         minSdk 21
         targetSdk 34
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "2.1.1"
     }
 
     signingConfigs {
         release {
+            storeFile file('release-key.keystore')
+            storePassword 'virtualspace123'
+            keyAlias 'virtualspace'
+            keyPassword 'virtualspace123'
+        }
+        debug {
             storeFile file('release-key.keystore')
             storePassword 'virtualspace123'
             keyAlias 'virtualspace'
@@ -28,6 +34,9 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
+        }
+        debug {
+            signingConfig signingConfigs.debug
         }
     }
     compileOptions {
