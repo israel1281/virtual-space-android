@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.Toast;
 import com.virtualspace.app.core.VirtualCore;
 import com.virtualspace.app.core.VirtualApp;
 import com.virtualspace.app.ui.AppListAdapter;
+import com.virtualspace.app.ui.AppSelectorDialog;
 import com.virtualspace.app.utils.ApkInstaller;
 import java.util.List;
 
@@ -35,7 +37,28 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         installButton = findViewById(R.id.installButton);
         
-        installButton.setOnClickListener(v -> openFilePicker());
+        installButton.setText("Clone App");
+        installButton.setOnClickListener(v -> showAppSelector());
+    }
+    
+    private void showAppSelector() {
+        AppSelectorDialog dialog = new AppSelectorDialog(this, this::cloneApp);
+        dialog.show();
+    }
+    
+    private void cloneApp(ApplicationInfo appInfo) {
+        try {
+            String apkPath = appInfo.sourceDir;
+            boolean success = ApkInstaller.installApkToVirtualSpace(this, apkPath);
+            if (success) {
+                Toast.makeText(this, "App cloned to virtual space: " + appInfo.loadLabel(getPackageManager()), Toast.LENGTH_SHORT).show();
+                loadInstalledApps(); // Refresh the list
+            } else {
+                Toast.makeText(this, "Failed to clone app", Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+            Toast.makeText(this, "Error cloning app: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
     
     private void openFilePicker() {
