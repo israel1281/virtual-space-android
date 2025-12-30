@@ -45,33 +45,19 @@ jobs:
 
     - name: Create Release
       if: startsWith(github.ref, 'refs/tags/')
-      uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: Virtual Space ${{ github.ref }}
-        body: |
-          Virtual Space Android App Release
-          
-          ## Features
-          - App sandboxing and virtualization
-          - Multi-account support
-          - Testing environment for APKs
-          - Educational research capabilities
-          
-          ## Installation
-          Download the APK and install on your Android device.
-        draft: false
-        prerelease: false
+      run: |
+        gh release create ${{ github.ref_name }} \
+          --title "Virtual Space ${{ github.ref_name }}" \
+          --notes "Virtual Space Android App Release
 
-    - name: Upload Release Asset
-      if: startsWith(github.ref, 'refs/tags/')
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: app/build/outputs/apk/release/app-release-unsigned.apk
-        asset_name: virtual-space-${{ github.ref_name }}.apk
-        asset_content_type: application/vnd.android.package-archive
+        ## Features
+        - App sandboxing and virtualization
+        - Multi-account support  
+        - Testing environment for APKs
+        - Educational research capabilities
+
+        ## Installation
+        Download the APK and install on your Android device." \
+          app/build/outputs/apk/release/app-release-unsigned.apk
