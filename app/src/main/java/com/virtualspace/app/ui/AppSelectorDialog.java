@@ -5,10 +5,14 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
@@ -57,16 +61,7 @@ public class AppSelectorDialog extends Dialog {
     }
     
     private void setupListView() {
-        List<String> appNames = new ArrayList<>();
-        PackageManager pm = getContext().getPackageManager();
-        
-        for (ApplicationInfo appInfo : installedApps) {
-            String appName = appInfo.loadLabel(pm).toString();
-            appNames.add(appName);
-        }
-        
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), 
-            android.R.layout.simple_list_item_1, appNames);
+        AppIconAdapter adapter = new AppIconAdapter(getContext(), installedApps);
         listView.setAdapter(adapter);
         
         listView.setOnItemClickListener((parent, view, position, id) -> {
@@ -75,5 +70,51 @@ public class AppSelectorDialog extends Dialog {
             }
             dismiss();
         });
+    }
+    
+    private static class AppIconAdapter extends BaseAdapter {
+        private Context context;
+        private List<ApplicationInfo> apps;
+        private PackageManager pm;
+        
+        AppIconAdapter(Context context, List<ApplicationInfo> apps) {
+            this.context = context;
+            this.apps = apps;
+            this.pm = context.getPackageManager();
+        }
+        
+        @Override
+        public int getCount() {
+            return apps.size();
+        }
+        
+        @Override
+        public Object getItem(int position) {
+            return apps.get(position);
+        }
+        
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+        
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                convertView = LayoutInflater.from(context).inflate(R.layout.item_app_with_icon, parent, false);
+            }
+            
+            ApplicationInfo appInfo = apps.get(position);
+            
+            ImageView icon = convertView.findViewById(R.id.appIcon);
+            TextView name = convertView.findViewById(R.id.appName);
+            TextView packageName = convertView.findViewById(R.id.packageName);
+            
+            icon.setImageDrawable(appInfo.loadIcon(pm));
+            name.setText(appInfo.loadLabel(pm));
+            packageName.setText(appInfo.packageName);
+            
+            return convertView;
+        }
     }
 }

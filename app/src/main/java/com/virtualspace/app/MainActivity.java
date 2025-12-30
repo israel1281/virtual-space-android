@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
     
     private void setupRecyclerView() {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new AppListAdapter(this::launchApp);
+        adapter = new AppListAdapter(this, this::launchApp);
         recyclerView.setAdapter(adapter);
     }
     

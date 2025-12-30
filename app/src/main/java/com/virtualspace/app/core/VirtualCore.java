@@ -64,6 +64,13 @@ public class VirtualCore {
                 app.isInstalled = true;
                 app.userId = generateUserId();
                 
+                // Load and store app icon
+                try {
+                    app.icon = packageInfo.applicationInfo.loadIcon(pm);
+                } catch (Exception e) {
+                    app.icon = null;
+                }
+                
                 // Import APK to private storage
                 String privatePath = importApkToPrivateStorage(apkPath, app);
                 if (privatePath != null) {
@@ -126,11 +133,10 @@ public class VirtualCore {
     
     private String getMainActivity(String packageName) {
         VirtualAppRuntime runtime = mRuntimes.get(packageName);
-        if (runtime != null && runtime.getApplicationInfo().activities != null 
-            && runtime.getApplicationInfo().activities.length > 0) {
-            return runtime.getApplicationInfo().activities[0].name;
+        if (runtime != null) {
+            return runtime.getMainActivity();
         }
-        return null;
+        return "MainActivity"; // fallback
     }
     
     public List<VirtualApp> getInstalledApps() {
